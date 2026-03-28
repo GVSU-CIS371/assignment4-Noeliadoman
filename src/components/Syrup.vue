@@ -1,26 +1,18 @@
 <template>
-  <div class="syrup"></div>
+  <div v-if="showSyrup" class="syrup" :style="{ backgroundColor: syrupColor }"></div>
 </template>
 
 <script setup lang="ts">
-  import { computed } from "vue";
-  import { currentSyrup } from "../stores/beverage";
-  const bgColor = computed(() => currentSyrup.value.color);
-</script>
+import { computed } from "vue";
+import { useBeverageStore } from "../stores/beverageStore";
 
+const beverageStore = useBeverageStore();
+const showSyrup = computed(() => beverageStore.selectedSyrup?.name !== "No Syrup");
+const syrupColor = computed(() => beverageStore.selectedSyrup?.color ?? "#c6c6c6");
+</script>
 <style lang="scss" scoped>
-@mixin syrup-layer($color) {
-  background: repeating-linear-gradient(
-    45deg,
-    white,
-    white 10px,
-    $color 10px,
-    $color 20px
-  );
-}
 .syrup {
   transform: translateY(400%);
-  @include syrup-layer(v-bind(bgColor));
   position: relative;
   width: 100%;
   height: 20%;

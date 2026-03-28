@@ -1,15 +1,17 @@
 <template>
-  <div class="froth">
-    <div v-for=" in 5" class="foam"></div> 
+  <div v-if="showCream" class="froth" :style="{ '--creamer-color': creamerColor }">
+    <div v-for="i in 5" :key="i" class="foam"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { computed } from "vue";
-  import { currentCreamer } from "../stores/beverage";
-  const bgColor = computed(() => currentCreamer.value.color);
-</script>
+import { computed } from "vue";
+import { useBeverageStore } from "../stores/beverageStore";
 
+const beverageStore = useBeverageStore();
+const showCream = computed(() => beverageStore.selectedCreamer?.name !== "No Cream");
+const creamerColor = computed(() => beverageStore.selectedCreamer?.color ?? "transparent");
+</script>
 <style lang="scss" scoped>
 .froth {
   overflow: visible;
@@ -17,12 +19,11 @@
   position: relative;
   height: 20%;
   width: 100%;
-  background-color: #c6c6c6;
   animation: pour-tea 2s 2s forwards;
 }
 .foam {
   display: block;
-  background: v-bind(bgColor);
+  background: var(--creamer-color);
   border-radius: 30px;
   height: 40px;
   width: 40px;
