@@ -1,74 +1,95 @@
 <template>
   <div>
-    <Beverage 
-    :isIced="currentTemp === 'Cold'" 
-    :creamerSelected="currentCreamer.name !== 'No Cream'"
-    :syrupSelected="currentSyrup.name !== 'No Syrup'" />
+    <Beverage :isIced="beverageStore.currentTemp === 'Cold'" />
     <ul>
       <li>
-        <template v-for="temp in temps" :key="temp">
+        <template v-for="temp in beverageStore.temps" :key="temp">
           <label>
             <input
               type="radio"
               name="temperature"
               :id="`r${temp}`"
               :value="temp"
-              v-model="currentTemp"
+              v-model="beverageStore.currentTemp"
             />
             {{ temp }}
           </label>
         </template>
       </li>
       <li>
-        <template v-for="base in bases" :key="base.name">
+        <template v-for="base in beverageStore.bases" :key="base.id">
           <label>
             <input
               type="radio"
               name="base"
-              :id="`r${base}`"
+              :id="`r${base.id}`"
               :value="base"
-              v-model="currentBase"
+              v-model="beverageStore.selectedBase"
             />
             {{ base.name }}
           </label>
         </template>
       </li>
       <li>
-        <template v-for="creamer in creamers" :key="creamer.name">
-          <label>
-            <input
-              type="radio"
-              name="creamer"
-              :id="`r${creamer}`"
-              :value="creamer"
-              v-model="currentCreamer"
-            />
-            {{ creamer.name }}
-          </label>
-        </template>
-      </li>
-      <li>
-        <template v-for="syrup in syrups" :key="syrup.name">
+        <template v-for="syrup in beverageStore.syrups" :key="syrup.id">
           <label>
             <input
               type="radio"
               name="syrup"
-              :id="`r${syrup}`"
+              :id="`r${syrup.id}`"
               :value="syrup"
-              v-model="currentSyrup"
+              v-model="beverageStore.selectedSyrup"
             />
             {{ syrup.name }}
           </label>
         </template>
       </li>
+      <li>
+        <template v-for="creamer in beverageStore.creamers" :key="creamer.id">
+          <label>
+            <input
+              type="radio"
+              name="creamer"
+              :id="`r${creamer.id}`"
+              :value="creamer"
+              v-model="beverageStore.selectedCreamer"
+            />
+            {{ creamer.name }}
+          </label>
+        </template>
+      </li>
     </ul>
+    <input type="text" placeholder="Beverage Name" v-model="beverageName" />
+    <button @click="beverageStore.makeBeverage(beverageName)">🍺 Make Beverage</button>
+  </div>
+  <div id="beverage-container" style="margin-top: 20px">
+    <div class="saved-beverages">
+      <label
+        v-for="beverage in beverageStore.savedBeverages"
+        :key="beverage.id"
+      >
+        <input
+          type="radio"
+          name="savedBeverage"
+          :value="beverage.id"
+          v-model="beverageStore.selectedSavedBeverageId"
+          @change="beverageStore.showBeverage(beverage)"
+        />
+        {{ beverage.name }}
+      </label>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Beverage from "./components/Beverage.vue";
-import { temps, creamers, bases, syrups, currentTemp, currentCreamer, currentBase, currentSyrup } from "./stores/beverage";
+import { useBeverageStore } from "./stores/beverageStore";
+import { ref } from "vue";
 
+
+
+const beverageStore = useBeverageStore();
+const beverageName = ref("");
 </script>
 
 <style lang="scss">
